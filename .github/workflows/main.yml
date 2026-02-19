@@ -62,10 +62,7 @@ jobs:
           sed -i "s/^jdbc.password.*$/jdbc.password\=${{ secrets.RDS_PASS }}/" src/main/resources/application.properties
           sed -i "s/db01/${{ secrets.RDS_ENDPOINT }}/" src/main/resources/application.properties
     
-      - name: Test AWS credentials
-        run: |
-          aws sts get-caller-identity
-
+      
 
             # Configure AWS credentials
       - name: Configure AWS credentials
@@ -74,6 +71,10 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+
+      - name: Test AWS credentials
+        run: |
+          aws sts get-caller-identity
 
       # Login to ECR
       - name: Login to ECR
