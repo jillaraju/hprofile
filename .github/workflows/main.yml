@@ -97,6 +97,40 @@ jobs:
           docker push $IMAGE:${{ github.run_number }}
           docker push $IMAGE:latest
 
+  PUSH_TO_ECR:
+    needs: BUILD_AND_PUBLISH
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+  
+
+      - name: Render ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: aws-files/taskdeffile.json
+          container-name: actions
+          image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/actapp:latest
+  
+
+      - name: Deploy ECS service
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{steps.task-def.outputs.task-definition}}
+          service: my-task-definition-06-02-2026-service-yvomf32d
+          cluster: vpro-act
+          wait-for-service-stability: true
+            
+
                     
 
       
