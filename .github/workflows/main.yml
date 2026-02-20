@@ -81,14 +81,22 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       # Build and push Docker image
+      # - name: Build and push image
+       # run: |
+        #  docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/actapp:${{ github.run_number }} .
+        #  docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/actapp:${{ github.run_number }}
+         # docker push $IMAGE:latest
+
+
       - name: Build and push image
         run: |
-          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/actapp:${{ github.run_number }} .
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/actapp:${{ github.run_number }}
+          IMAGE=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/actapp
+
+          docker build -t $IMAGE:${{ github.run_number }} -t $IMAGE:latest .
+
+          docker push $IMAGE:${{ github.run_number }}
           docker push $IMAGE:latest
 
-
-
-              
+                    
 
       
